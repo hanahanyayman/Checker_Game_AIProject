@@ -63,7 +63,7 @@ while running:
     
 
     tempboard=ch.Board
-    depth=3
+    depth=5
     
     for event in py.event.get():
         if event.type == py.QUIT:
