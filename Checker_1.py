@@ -1,5 +1,4 @@
 import random
-
 Board=[
       [ 0 ,'R', 0 ,'R', 0 ,'R', 0 ,'R'],
       ['R', 0 ,'R', 0 ,'R', 0 ,'R', 0 ],
@@ -10,10 +9,14 @@ Board=[
       [ 0 ,'B', 0 ,'B', 0 ,'B', 0 ,'B'],
       ['B', 0 ,'B', 0 ,'B', 0 ,'B', 0 ]
      ]
+NextPlayer='B'
+Num=0
+class State:
+    BoardState=None
+    NextState=None
+    Number=None
+    Player=None
 
-
-
-depth=None
 
 def convert_to_king(board,i,j):
     tempboard=return_board(board)
@@ -23,13 +26,11 @@ def convert_to_king(board,i,j):
         tempboard[i][j]='KR'
     return tempboard
 
-def get_child_by_random(board,NextPlayer):
+def get_child_by_random(board):
     if NextPlayer == 'R':
        Children=get_all_children_R(board)
     else:
        Children=get_all_children_B(board)
-    if Children == None:
-        return None
     child=random.randint(0,len(Children)-1)
     return Children[child]
 
@@ -163,29 +164,25 @@ def print_grid(grid):
         for i in range(0, len(grid)):
             for j in range(0, len(grid[i])):
                 if grid[i][j] == 0 :
-                    print(" # ", end="\t")
+                    print("0", end=" \t")
                 elif grid[i][j] == '-':
-                    print("   ", end="\t")
+                    print("-", end=" \t")
                 elif grid[i][j] == 'R':
-                    print(" R ", end="\t")
+                    print("R", end=" \t")
                 elif grid[i][j] == 'B':
-                    print(" B ", end="\t")
+                    print("B", end=" \t")
                 elif grid[i][j] == 'KB':
-                    print(" KB ", end="\t")
+                    print("KB", end=" \t")
                 elif grid[i][j] == 'KR':
-                    print(" KR ", end="\t")
+                    print("KR", end=" \t")
             print("\n")
 
-def utility(board,Player):
-    '''' if Player == 'R':
-        oppo='B'
-    else:
-        oppo='R'''''
+def utility(board):
     Win=Winner(board)
     if Win == 'R':
-        return -20
+        return -1
     elif Win == 'B':
-        return 20
+        return 1
     return 0
 
 def Winner(board):
@@ -205,7 +202,7 @@ def Winner(board):
         return 'R'
     elif LossR and not LossB:
         return 'B'
-    return 0
+    return 'N'
 
     pass
 
@@ -261,109 +258,48 @@ def get_all_children_B(board):
                     Children.append(temp[x])
     return Children
 
-def calculate(board,Player):
-    if Player == 'R':
-        king='KR'
-        kingoppo='KB'
-        oppo='B'
-    else:
-        king='KB'
-        kingoppo='KR'
-        oppo='R'
-    NumCurrentPlayer=0
-    NumOtherPlayer=0
-    for i in range(0, len(board)):
-        for j in range(0, len(board[i])):
-            if board[i][j] == Player  or board[i][j] == king:
-                NumCurrentPlayer=NumCurrentPlayer+1
-            elif board[i][j] == oppo or board[i][j] == kingoppo:
-                NumOtherPlayer=NumOtherPlayer+1
-    if NumCurrentPlayer == NumOtherPlayer :
-        return NumCurrentPlayer
-    return NumCurrentPlayer-NumOtherPlayer
-
-def minmax(board,Depth,Player):
-    child=None
-    if Player == 'B':
-        PrivousPlayer='R'
-        Children=get_all_children_B(board)
-    else:
-        PrivousPlayer='B'
-        Children=get_all_children_R(board)
-
-    if utility(board,PrivousPlayer) != 0:
-       #print("---->",PrivousPlayer)
-       #print("---> ",utility(board,PrivousPlayer))
-       return utility(board,Player)
-   
-    if Children == []:
+def minmax(board,depth):
+   global NextPlayer
+   global Num
+   state=State()
+   state.BoardState=board
+   state.Number=Num
+   state.NextState=[]
+   state.Player=NextPlayer
+   Children=[]
+   NextBoard=None
+   if depth == 0:
        return 0
    
-    if Depth == 0:
-       return calculate(board,Player)
-    #list=[]
-    if Player == 'B':
-      #word='Max B'
-      value=-10000000000000000
-      for i in range(0,len(Children)):
-        max_value_of_children=minmax(Children[i],Depth-1,'R')
-        #list.append(max_value_of_children)
-        #print("max value of child")
-        #print(max_value_of_children)
-        if  value < max_value_of_children:
-            value = max_value_of_children
-            child=Children[i]
-    else:
-      value=10000000000000000
-      #word='Min R'
-      for i in range(0,len(Children)):
-        min_value_of_children=minmax(Children[i],Depth-1,'B')
-        #list.append(min_value_of_children)
-        #print("min value of child")
-        #print(min_value_of_children)
-        if value > min_value_of_children:
-            value = min_value_of_children
-    '''  print(word, end="\t")
-    for i in range(0,len(list)):
-        print(list[i], end="\t")
-    print(value)'''
-    if depth == Depth:
-        print(value)
-        return child
-    else:
-        return value
-
-def Assign(board):
-    for i in range(0,len(board)):
-        for j in range(0,len(board[i])):
-            Board[i][j]=board[i][j]
-
-if __name__ == "__main__":
-   tempboard=Board
-   while utility(tempboard,'R') == 0 and tempboard != None:
-    print("play B")
-    #Enter=input("Enter any key to make B play : ")
-    depth=5
-    tempboard = minmax(tempboard,depth,'B')
-    #print_grid(Board)
-    #print("&&&&&&&&")
-    if tempboard != None:
-       Assign(tempboard)
-       print_grid(tempboard)
-    print("----------------------------")
-    if utility(tempboard,'B') == 0 and tempboard != None:
-       # Enter=input("Enter any key to make R play : ")
-        print("play R")
-        tempboard = get_child_by_random(tempboard,'R')
-        #print_grid(Board)
-        #print("&&&&&&&&")
-        if tempboard != None:
-           Assign(tempboard)
-           print_grid(tempboard)
-        print("----------------------------")
-   if tempboard == None:
-       print("Draw")
-   elif utility(tempboard,'B') == 20:
-    print("B win")
+   if NextPlayer == 'B':
+      Children=get_all_children_B(state.BoardState)
    else:
-    print("R win")
+      Children=get_all_children_R(state.BoardState)
+
+   if utility(state.BoardState) != 0:
+       return utility(state.BoardState)
+   
+   if Children == []:
+       return 0
+   
+   if state.Player == 'R':
+           NextPlayer='B'
+           Num=-10000000000000000000000
+   else:
+           NextPlayer='R'
+           Num=10000000000000000000000
+
+   for i in range(0,len(Children)):
+       num=minmax(Children[i],depth-1)
+       if state.Player == 'B' and state.Number <= num:
+           state.Number=num
+           NextBoard=Children[i]
+       elif state.Player == 'R' and state.Number > num:
+           state.Number=num
+   if state.BoardState == Board:
+       return NextBoard
+   else:
+       return num
+    
+if __name__ == "__main__":
+   pass
