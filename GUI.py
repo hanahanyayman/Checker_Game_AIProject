@@ -61,6 +61,9 @@ running = True
 while running:
     display_surface.blit(text, textRect)
     
+    tempboard=ch.Board
+    depth=5
+    
     # Handle events
     for event in py.event.get():
         if event.type == py.QUIT:
@@ -95,6 +98,34 @@ while running:
                      draw_piece(row, column, BLUE)
              elif board[row][column] == 'KR':
                     draw_piece(row, column, RED)
+    
+        while ch.Winner=='R' and tempboard != None:
+            text = font.render('Computer plays ...', True, white)
+            textRect = text.get_rect()
+            textRect.midbottom=(WINDOW_WIDTH//2,WINDOW_HEIGHT-10-15)
+            display_surface.blit(text, textRect)
+            tempboard = ch.minmax(tempboard,depth,'B')
+            if tempboard !=[]:
+                ch.Assign(tempboard)
+                ch.print_grid(tempboard)
+            else:
+                break
+    ###########################
+            print("----------------------------")
+    ###########################
+            if ch.Winner=='B' and tempboard != None:
+                text = font.render('AI plays ...', True, white)
+                textRect = text.get_rect()
+                textRect.midbottom=(WINDOW_WIDTH//2,WINDOW_HEIGHT-10-15)
+                display_surface.blit(text, textRect)
+                tempboard = ch.get_child_by_random(tempboard,'B')
+                if tempboard != None:
+                    ch.Assign(tempboard)
+                    ch.print_grid(tempboard)
+                else:
+                    break
+    ###########################
+            print("----------------------------")
 
     # Update the screen
     py.display.flip()

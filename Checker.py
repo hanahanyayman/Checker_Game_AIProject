@@ -11,18 +11,6 @@ Board=[
       ['B', 0 ,'B', 0 ,'B', 0 ,'B', 0 ]
      ]
 
-
-'''Board=[
-      [ 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'-'],
-      ['-', 0 ,'-', 0 ,'-', 0 ,'-', 0 ],
-      [ 0 ,'-', 0 ,'-', 0 ,'KR', 0 ,'-'],
-      ['-', 0 ,'-', 0 ,'-', 0 ,'-', 0 ],
-      [ 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'-'],
-      ['-', 0 ,'KB', 0 ,'-', 0 ,'-', 0 ],
-      [ 0 ,'-', 0 ,'-', 0 ,'-', 0 ,'-'],
-      ['-', 0 ,'-', 0 ,'-', 0 ,'-', 0 ]
-     ]'''
-
 depth=None
 
 def return_board(board):
@@ -344,7 +332,7 @@ if __name__ == "__main__":
     depth=3
 
     while utility(tempboard,'R') == 0 and tempboard != None:
-        print("Computer plays ...")
+        print("AI agent plays ...")
         tempboard = minmax(tempboard,depth,'B')
         if tempboard != []:
            Assign(tempboard)
@@ -353,7 +341,7 @@ if __name__ == "__main__":
             break
         print("----------------------------")
         if utility(tempboard,'B') == 0 and tempboard != None:
-            print("AI plays ...")
+            print("Computer plays ...")
             tempboard = get_child_by_random(tempboard,'R')
             if tempboard != None:
                Assign(tempboard)
@@ -365,6 +353,6 @@ if __name__ == "__main__":
     if tempboard == None:
         print("Draw")
     elif utility(tempboard,'B') == 20:
-        print("AI wins")
+        print("AI agent wins")
     else:
         print("Computer wins")
